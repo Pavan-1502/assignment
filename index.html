@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Management</title>
+</head>
+<body>
+    <h2>Customer Management</h2>
+
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <h3>Login</h3>
+        <form id="loginForm">
+            <label for="login_id">Username:</label>
+            <input type="text" id="login_id" name="login_id" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="button" onclick="authenticateUser()">Login</button>
+        </form>
+        <p id="loginError" style="color: red;"></p>
+    </div>
+
+    <!-- Customer List Screen -->
+    <div id="customerListScreen" style="display: none;">
+        <h3>Customer List</h3>
+        <table>
+            <!-- Customer data will be dynamically populated here -->
+        </table>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let authToken = null;
+
+        // Function to authenticate the user and get the Bearer token.
+        function authenticateUser() {
+            const login_id = document.getElementById('login_id').value;
+            const password = document.getElementById('password').value;
+
+            fetch('https://qa2.sunbasedata.com/sunbase/portal/api/assignment_auth.jsp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    login_id: login_id,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                authToken = data.token;
+                showCustomerListScreen();
+            })
+            .catch(error => {
+                document.getElementById('loginError').textContent = 'Authentication failed. Please check your credentials.';
+            });
+        }
+
+        // Function to fetch the customer list using the API and populate the table.
+        function fetchCustomerList() {
+            fetch('https://qa2.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch customer list');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const customerTable = document.getElementById('customerTable');
+                // Clear existing rows from the table.
+                customerTable.innerHTML = '';
+                // Loop through the customer data and populate the table.
+                data.forEach(customer => {
+                    const row = customerTable.insertRow();
+                    const firstNameCell = row.insertCell(0);
+                    const lastNameCell = row.insertCell(1);
+                    const streetCell = row.insertCell(2);
+                    const addressCell = row.insertCell(3);
+                    const cityCell = row.insertCell(4);
+                    const stateCell = row.insertCell(5);
+                    const emailCell = row.insertCell(6);
+                    const phoneCell = row.insertCell(7);
+
+                    firstNameCell.textContent = customer.first_name;
+                    lastNameCell.textContent = customer.last_name;
+                    streetCell.textContent = customer.street;
+                    addressCell.textContent = customer.address;
+                    cityCell.textContent = customer.city;
+                    stateCell.textContent = customer.state;
+                    emailCell.textContent = customer.email;
+                    phoneCell.textContent = customer.phone;
+                });
+            })
+            .catch(error => {
+                // Handle errors here.
+                console.error(error);
+            });
+        }
+
+        // Function to show the Customer List Screen and fetch the customer list.
+        function showCustomerListScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('customerListScreen').style.display = 'block';
+            fetchCustomerList();
+        }
+
+        // Function to logout by clearing the token and showing the Login Screen.
+        function logout() {
+            authToken = null;
+            document.getElementById('customerListScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
