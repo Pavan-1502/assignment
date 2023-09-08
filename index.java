@@ -1,34 +1,34 @@
 
-import java.util.*;
+// import java.util.*;
 
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter a word: ");
-        String word = sc.nextLine();
+// class Main {
+//     public static void main(String[] args) {
+//         Scanner sc = new Scanner(System.in);
+//         System.out.print("Enter a word: ");
+//         String word = sc.nextLine();
 
-        if (CorrectWord(word)) {
-            System.out.println("'" + word + "' is a correct word.");
-        } else {
-            System.out.println("'" + word + "' is an incorrect word.");
-        }
-    }
+//         if (CorrectWord(word)) {
+//             System.out.println("'" + word + "' is a correct word.");
+//         } else {
+//             System.out.println("'" + word + "' is an incorrect word.");
+//         }
+//     }
 
-    public static boolean CorrectWord(String word) {
-        for (int i = 0; i < word.length(); i++) {
-            char currentChar = word.charAt(i);
+//     public static boolean CorrectWord(String word) {
+//         for (int i = 0; i < word.length(); i++) {
+//             char currentChar = word.charAt(i);
             
-            if (!Character.isLetterOrDigit(currentChar)) {
-                return false;
-            }
+//             if (!Character.isLetterOrDigit(currentChar)) {
+//                 return false;
+//             }
             
-            if (i < word.length() - 1 && currentChar == word.charAt(i + 1)) {
-                return false;
-            }
-        }
-        return true;
-    }   
-}
+//             if (i < word.length() - 1 && currentChar == word.charAt(i + 1)) {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }   
+// }
 // class Main{
 //     public static void main(String[] args) {
 
